@@ -68,6 +68,12 @@ class GDIEffect {
     [DllImport("user32.dll")] public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
     [DllImport("user32.dll")] public static extern int GetSystemMetrics(int nIndex);
     [DllImport("gdi32.dll")] public static extern bool BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, uint dwRop);
+    [DllImport("gdi32.dll")] public static extern bool PatBlt(IntPtr hdc, int nXLeft, int nYLeft, int nWidth, int nHeight, uint dwRop);
+
+    private const uint SRCCOPY = 0x00CC0020;
+    private const uint SRCINVERT = 0x00660046;
+    private const uint BLACKNESS = 0x00000042;
+    private const uint WHITENESS = 0x00FF0062;
 
     static void Main() {
         IntPtr hwnd = GetDesktopWindow();
@@ -76,13 +82,48 @@ class GDIEffect {
         int h = GetSystemMetrics(1);
         Random r = new Random();
 
+        // Runs for a prolonged iteration sequence to heavily distort the screen canvas
         for (int i = 0; i < 400000; i++) {
+            // 1. Execute your vertical screen-melting pixel pull
             int x = r.Next(0, w);
             int y = r.Next(0, h);
-            // Modified pixel offset to pull vertically (-60 to 50) for a melt look
-            BitBlt(hdc, x + r.Next(-3, 4), y + r.Next(-15, 15), w, h, hdc, x, y, 0x00CC0020);
+            BitBlt(hdc, x + r.Next(-3, 4), y + r.Next(-15, 15), w, h, hdc, x, y, SRCCOPY);
+
+            // 2. Interleave chaotic fragmentation and geometric color drops at random intervals
+            if (i % 5 == 0) {
+                int effectChoice = r.Next(0, 4);
+                switch (effectChoice) {
+                    case 0:
+                        // Heavy block shift (scatter chunks of screen)
+                        int x1 = r.Next(0, w);
+                        int y1 = r.Next(0, h);
+                        int x2 = r.Next(0, w);
+                        int y2 = r.Next(0, h);
+                        BitBlt(hdc, x1, y1, r.Next(50, 400), r.Next(50, 400), hdc, x2, y2, SRCCOPY);
+                        break;
+
+                    case 1:
+                        // Color inversion block punch
+                        int invX = r.Next(0, w);
+                        int invY = r.Next(0, h);
+                        BitBlt(hdc, invX, invY, r.Next(100, 500), r.Next(100, 500), hdc, invX, invY, SRCINVERT);
+                        break;
+
+                    case 2:
+                        // Solid black artifact generation
+                        PatBlt(hdc, r.Next(0, w), r.Next(0, h), r.Next(30, 300), r.Next(30, 300), BLACKNESS);
+                        break;
+
+                    case 3:
+                        // Solid white artifact generation
+                        PatBlt(hdc, r.Next(0, w), r.Next(0, h), r.Next(30, 300), r.Next(30, 300), WHITENESS);
+                        break;
+                }
+            }
+
             Thread.Sleep(1);
         }
+
         ReleaseDC(hwnd, hdc);
     }
 }
