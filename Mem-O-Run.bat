@@ -59,7 +59,7 @@ timeout /t 1 /nobreak > nul
 
 start "" "%EXE_FILE%"
 
-start /min C:\Mem-O-Run-v1.0.1\Little-MBR.mp3
+start /min "" "%~dp0Little-MBR.mp3"
 
 echo [+] Done.
 pause
